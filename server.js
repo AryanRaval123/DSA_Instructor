@@ -13,16 +13,18 @@ const __dirname = path.dirname(__filename);
 const myapp = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve public static files (our frontend)
-myapp.use(express.static(path.join(__dirname, 'public')));
+// FIX 1: Serve static files directly from the root directory where your HTML/CSS/JS live
+myapp.use(express.static(path.join(__dirname, './')));
 myapp.use(express.json());
 myapp.use(cors());
 
+// Optional but highly recommended: Explicitly handle the root URL route
+myapp.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Initialize the Google Gen AI client using your securely stored API key
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-
-
 
 myapp.post('/api/chat', async (req, res) => {
     try {
@@ -35,7 +37,7 @@ myapp.post('/api/chat', async (req, res) => {
         // Initialize active history array if not already provided
         const activeHistory = history || [];
 
-        // myappend the user's incoming message to the chat history
+        // append the user's incoming message to the chat history
         activeHistory.push({
             role: 'user',
             parts: [{ text: message }]
@@ -43,7 +45,7 @@ myapp.post('/api/chat', async (req, res) => {
 
         // Request text generation from Gemini
         const response = await ai.models.generateContent({
-            model: "gemini-3.5-flash",
+            model: "gemini-2.5-flash", // Updated to the official stable 2.5 flash model
             contents: activeHistory,
             config: {
                 systemInstruction: `you have to act as a Data structure and algorithm instructor and answer the user query in the simplest way and if user ask anything out of the box that it
@@ -54,14 +56,13 @@ like if user asks,
 answer like ask me some sensible question
 ,you reply like this yourself
 
-and if user ask question related to Data
- structure and algorithm, answer them`
+and if user ask question related to Data structure and algorithm, answer them`
             }
         });
 
         const modelResponseText = response.text;
 
-        // myappend the bot's response to the active conversation history
+        // append the bot's response to the active conversation history
         activeHistory.push({
             role: 'model',
             parts: [{ text: modelResponseText }]
@@ -79,8 +80,12 @@ and if user ask question related to Data
     }
 });
 
-myapp.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// For local testing
+if (process.env.NODE_ENV !== 'production') {
+    myapp.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
 
-module.exports = app;
+// FIX 2 & 3: Export the correct instance using ES module syntax for Vercel
+export default myapp;
