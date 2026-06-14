@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Chatbot Instructor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <h2>💻 DSA Instructor</h2>
+            <p>I only answer Data Structures & Algorithms questions.</p>
+        </header>
+        
+        <div class="chat-box" id="chatBox">
+            <div class="message model-message">
+                Hello. I am your DSA Instructor. Ask me a sensible question about data structures or algorithms. If you ask me irrelevant things, expect a rude response.
+            </div>
+        </div>
+
+        <form class="chat-input-area" id="chatForm">
+            <input type="text" id="userInput" placeholder="Ask a DSA question..." autocomplete="off" required>
+            <button type="submit" id="sendBtn">Send</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
