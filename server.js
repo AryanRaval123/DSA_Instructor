@@ -10,18 +10,21 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+const myapp = express();
 const PORT = process.env.PORT || 3000;
 
 // Serve public static files (our frontend)
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
-app.use(cors());
+myapp.use(express.static(path.join(__dirname, 'public')));
+myapp.use(express.json());
+myapp.use(cors());
 
 // Initialize the Google Gen AI client using your securely stored API key
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-app.post('/api/chat', async (req, res) => {
+
+
+
+myapp.post('/api/chat', async (req, res) => {
     try {
         const { history, message } = req.body;
         console.log(history);
@@ -32,7 +35,7 @@ app.post('/api/chat', async (req, res) => {
         // Initialize active history array if not already provided
         const activeHistory = history || [];
 
-        // Append the user's incoming message to the chat history
+        // myappend the user's incoming message to the chat history
         activeHistory.push({
             role: 'user',
             parts: [{ text: message }]
@@ -58,7 +61,7 @@ and if user ask question related to Data
 
         const modelResponseText = response.text;
 
-        // Append the bot's response to the active conversation history
+        // myappend the bot's response to the active conversation history
         activeHistory.push({
             role: 'model',
             parts: [{ text: modelResponseText }]
@@ -76,7 +79,7 @@ and if user ask question related to Data
     }
 });
 
-app.listen(PORT, () => {
+myapp.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
